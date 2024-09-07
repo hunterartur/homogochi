@@ -1,5 +1,6 @@
 package com.myhuholi.homogochi.domain.enums;
 
+import com.myhuholi.homogochi.exception.EntityNotFoundException;
 import jakarta.persistence.AttributeConverter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,12 @@ public enum ActivityRate {
                 return activityRate;
             }
         }
-
-        return null;
+        throw new EntityNotFoundException(EntityName.ACTIVITY_RATE);
     }
 
     public static ActivityRate getBySysName(String sysName) {
         if (StringUtils.isBlank(sysName)) {
-            return null;
+            throw new EntityNotFoundException(EntityName.ACTIVITY_RATE);
         }
 
         for (ActivityRate value : values()) {
@@ -39,7 +39,7 @@ public enum ActivityRate {
             }
         }
 
-        return null;
+        throw new EntityNotFoundException(EntityName.ACTIVITY_RATE);
     }
 
     public static class Converter implements AttributeConverter<ActivityRate, Integer> {

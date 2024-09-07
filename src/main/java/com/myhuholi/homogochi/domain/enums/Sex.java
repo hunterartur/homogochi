@@ -1,5 +1,6 @@
 package com.myhuholi.homogochi.domain.enums;
 
+import com.myhuholi.homogochi.exception.EntityNotFoundException;
 import jakarta.persistence.AttributeConverter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public enum Sex {
 
     public static Sex getBySysName(String sexSysName) {
         if (StringUtils.isBlank(sexSysName)) {
-            return null;
+            throw new EntityNotFoundException(EntityName.SEX);
         }
 
         for (Sex value : values()) {
@@ -26,7 +27,7 @@ public enum Sex {
             }
         }
 
-        return null;
+        throw new EntityNotFoundException(EntityName.SEX);
     }
 
     public static class Converter implements AttributeConverter<Sex, String> {
