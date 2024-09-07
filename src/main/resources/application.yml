@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: Tamahochi
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/tamagochi
+    username: tamagochi_user
+    password: tamagochi_user1234
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+    drop-first: true
+  servlet:
+    multipart:
+      max-request-size: "1GB"
+      max-file-size: "1GB"
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+storage:
+  strategy: s3
+  path: "files"
+  url: "http://localhost:9000"
+  user: "tamagochi_minio"
+  password: "tamagochi_minio"
+server:
+  port: 8181
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

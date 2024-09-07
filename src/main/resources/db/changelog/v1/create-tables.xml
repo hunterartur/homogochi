@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create user table" author="almaz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="hmg_user"/>
+            </not>
+        </preConditions>
+        <createTable tableName="hmg_user">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="uuid" type="UUID">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="age" type="NUMERIC(3,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sex" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="NUMERIC(3,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="height" type="NUMERIC(3,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="activity_rate" type="NUMERIC(2,0)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create homogochi picture table" author="almaz">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <not>
+                    <tableExists tableName="hmg_picture"/>
+                </not>
+            </and>
+        </preConditions>
+        <createTable tableName="hmg_picture">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="state_sysname" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filename" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="default_flag" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create homogochi state table" author="almaz">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <not>
+                    <tableExists tableName="hmg_state"/>
+                </not>
+            </and>
+        </preConditions>
+        <createTable tableName="hmg_state">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="sysname" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="brief" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="default_flag" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="hmg_state">
+            <column name="id" valueNumeric="1"/>
+            <column name="sysname" value="normal"/>
+            <column name="brief" value="Нормальное"/>
+            <column name="description" value="Не сыт, но и не голодает"/>
+            <column name="default_flag" valueBoolean="true"/>
+        </insert>
+        <insert tableName="hmg_state">
+            <column name="id" valueNumeric="2"/>
+            <column name="sysname" value="hungry"/>
+            <column name="brief" value="Голоден"/>
+            <column name="description" value="Томогочи голоден, покормите его прогулкой"/>
+        </insert>
+        <insert tableName="hmg_state">
+            <column name="id" valueNumeric="3"/>
+            <column name="sysname" value="dying"/>
+            <column name="brief" value="Сильно голоден"/>
+            <column name="description" value="Томогочи умирает от голода, срочно прогуляйтесь"/>
+        </insert>
+        <insert tableName="hmg_state">
+            <column name="id" valueNumeric="4"/>
+            <column name="sysname" value="well_fed"/>
+            <column name="brief" value="Полностью сыт"/>
+            <column name="description" value="Наелся и спит"/>
+        </insert>
+
+        <addColumn tableName="hmg_user">
+            <column name="state_id" type="BIGINT" defaultValueNumeric="1">
+                <constraints nullable="false" referencedTableName="hmg_state" referencedColumnNames="id"
+                             foreignKeyName="fk_user_state_id"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="insert homogochi picture table values" author="almaz">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="hmg_picture"/>
+            </and>
+        </preConditions>
+        <insert tableName="hmg_picture">
+            <column name="state_sysname" value="normal"/>
+            <column name="filename" value="normal.jpeg"/>
+            <column name="default_flag" valueBoolean="true"/>
+        </insert>
+        <insert tableName="hmg_picture">
+            <column name="state_sysname" value="hungry"/>
+            <column name="filename" value="hungry.jpeg"/>
+            <column name="default_flag" valueBoolean="true"/>
+        </insert>
+        <insert tableName="hmg_picture">
+            <column name="state_sysname" value="dying"/>
+            <column name="filename" value="dying.jpeg"/>
+            <column name="default_flag" valueBoolean="true"/>
+        </insert>
+        <insert tableName="hmg_picture">
+            <column name="state_sysname" value="well_fed"/>
+            <column name="filename" value="well_fed.jpeg"/>
+            <column name="default_flag" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

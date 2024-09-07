@@ -1,0 +1,229 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-tables
+      author: Alsu Yumadilova
+      changes:
+        - createTable:
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              - column:
+                  name:  account_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: login
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    unique: false
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reg_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: varchar(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: account_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: account_role_account_id_fk
+                    referencedTableName: account
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: account_role_role_id_fk
+                    referencedTableName: role
+                    referencedColumnNames: id
+                    nullable: false
+
+        - addUniqueConstraint:
+            columnNames: account_id, role_id
+            constraintName: acc_role_id_constr
+            tableName: account_role
+
+        - createTable:
+            tableName: status
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: task
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: task_account_id_fk
+                    referencedTableName: account
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: status_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: task_status_id_fk
+                    referencedTableName: status
+                    referencedColumnNames: id
+
+        - createTable:
+            tableName: status_change
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: status_change_task_id_fk
+                    referencedTableName: task
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: status_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: status_change_status_id_fk
+                    referencedTableName: status
+                    referencedColumnNames: id
+                    nullable: false
+
+        - createTable:
+            tableName: transcription
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_audio
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: true
+              - column:
+                  name: file_text
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: true
+              - column:
+                  name: file_recommendation
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: true
+              - column:
+                  name: account_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: transcription_account_id_fk
+                    referencedTableName: account
+                    referencedColumnNames: id
+              - column:
+                  name: task_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: transcription_task_id_fk
+                    referencedTableName: task
+                    referencedColumnNames: id
+                    nullable: false

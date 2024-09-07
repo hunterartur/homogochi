@@ -1,0 +1,54 @@
+version: '3'
+services:
+  core:
+    build: ./
+    container_name: core
+    ports:
+      - "8181:8080"
+    restart: on-failure
+    depends_on:
+      - postgres
+      - minio
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: tamagochi
+      DB_USER: tamagochi_user
+      DB_PASS: tamagochi_user1234
+      SERVER_PORT: 8080
+      STORAGE_STRATEGY: S3
+      STORAGE_PATH: files
+      STORAGE_URL: http://minio:9000
+      STORAGE_USER: tamagochi_minio
+      STORAGE_PASSWORD: tamagochi_minio
+  postgres:
+    image: postgres:bullseye
+    container_name: postgresdb
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: tamagochi_user
+      POSTGRES_PASSWORD: tamagochi_user1234
+      POSTGRES_DB: tamagochi
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+  minio:
+    image: bitnami/minio:2024.2.14
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: tamagochi_minio
+      MINIO_ROOT_PASSWORD: tamagochi_minio
+    volumes:
+      - minio-data:/bitnami/minio/data
+
+volumes:
+  pg-data:
+    driver: local
+  minio-data:
+    driver: local
+
