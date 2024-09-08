@@ -127,22 +127,22 @@
         </preConditions>
         <insert tableName="hmg_picture">
             <column name="state_sysname" value="normal"/>
-            <column name="filename" value="normal.jpeg"/>
+            <column name="filename" value="normal.png"/>
             <column name="default_flag" valueBoolean="true"/>
         </insert>
         <insert tableName="hmg_picture">
             <column name="state_sysname" value="hungry"/>
-            <column name="filename" value="hungry.jpeg"/>
+            <column name="filename" value="hungry.png"/>
             <column name="default_flag" valueBoolean="true"/>
         </insert>
         <insert tableName="hmg_picture">
             <column name="state_sysname" value="dying"/>
-            <column name="filename" value="dying.jpeg"/>
+            <column name="filename" value="dying.png"/>
             <column name="default_flag" valueBoolean="true"/>
         </insert>
         <insert tableName="hmg_picture">
             <column name="state_sysname" value="well_fed"/>
-            <column name="filename" value="well_fed.jpeg"/>
+            <column name="filename" value="well_fed.png"/>
             <column name="default_flag" valueBoolean="true"/>
         </insert>
     </changeSet>

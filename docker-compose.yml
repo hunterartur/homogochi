@@ -9,6 +9,7 @@ services:
     depends_on:
       - postgres
       - minio
+      - ml
     environment:
       SPRING_PROFILES_ACTIVE: prod
       DB_HOST: postgres
@@ -45,6 +46,12 @@ services:
       MINIO_ROOT_PASSWORD: tamagochi_minio
     volumes:
       - minio-data:/bitnami/minio/data
+  ml:
+    build: ../homogochi_ai/.
+    container_name: ml
+    ports:
+      - "8090:8090"
+    restart: on-failure
 
 volumes:
   pg-data:

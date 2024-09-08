@@ -2,6 +2,8 @@ package com.myhuholi.homogochi.routes;
 
 import com.myhuholi.homogochi.dto.request.ChangeStateReq;
 import com.myhuholi.homogochi.dto.request.RegisterReq;
+import com.myhuholi.homogochi.dto.request.StepStatisticReq;
+import com.myhuholi.homogochi.dto.response.StepsForNextDayRes;
 import com.myhuholi.homogochi.dto.response.UserRes;
 import com.myhuholi.homogochi.facade.UserFacade;
 import com.myhuholi.homogochi.mapping.UserMapper;
@@ -24,5 +26,10 @@ public class UserController {
     @PostMapping(path = "/update_state")
     public ResponseEntity<UserRes> changeState(@RequestBody ChangeStateReq req) {
         return ResponseEntity.ok(userFacade.changeState(req));
+    }
+
+    @PostMapping(path = "/steps_statistic")
+    public ResponseEntity<StepsForNextDayRes> acceptStatistic(@RequestBody StepStatisticReq req) {
+        return ResponseEntity.ok(userFacade.acceptStatistic(req));
     }
 }

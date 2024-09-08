@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +54,7 @@ public class LocalFileStorage implements FileStorage {
     @Override
     public void store(MultipartFile file, String filePath) {
         try {
-            if (file.isEmpty()) {
+            if (file.isEmpty() ||  StringUtils.isBlank(file.getOriginalFilename())) {
                 throw new StorageException("File is empty");
             }
 
@@ -122,5 +123,46 @@ public class LocalFileStorage implements FileStorage {
         } catch (IOException e) {
             throw new StorageException("Failed to load file: %s".formatted(filePath), e);
         }
+    }
+
+    /**
+     * Выгрузка файла в бинарном виде
+     * @param filePath Путь/Ключ для нахождения файла
+     * @return Файл в бинарном формате
+     */
+    @Override
+    public byte[] loadFileBytes(String filePath) {
+        Resource resource = load(filePath);
+        try {
+            return resource.getContentAsByteArray();
+        } catch (IOException e) {
+            throw new StorageException(String.format("Can't get file content as byte array: %s", filePath), e, StorageError.STORAGE_ERROR);
+        }
+    }
+
+    @Override
+    public void store(Resource file, String filePath) {
+        try {
+            if (!file.isFile() || !file.isReadable() || StringUtils.isBlank(file.getFilename())) {
+                throw new StorageException("File is empty");
+            }
+
+            Path destinationPath = this.rootLocation.resolve(Paths.get(filePath)).normalize().toAbsolutePath();
+
+            if (!destinationPath.startsWith(this.rootLocation)) {
+                throw new StorageException("Can't store file outside storage");
+            }
+
+            Files.createDirectories(destinationPath.getParent());
+            Files.write(destinationPath, file.getContentAsByteArray());
+        } catch (IOException e) {
+            throw new StorageException("Failed to store file: %s".formatted(file.getFilename()), e);
+        }
+    }
+
+    @Override
+    public boolean isFileExists(String filePath) {
+        Path destinationPath = this.rootLocation.resolve(Paths.get(filePath)).normalize().toAbsolutePath();
+        return Files.exists(destinationPath);
     }
 }

@@ -24,4 +24,9 @@ public class HomoStateService {
         return stateRepository.findHomoStateBySysName(sysName)
                 .orElseThrow(() -> new EntityNotFoundException(EntityName.HOMO_STATE));
     }
+
+    public HomoState findDefaultHomoState() {
+        return stateRepository.findHomoStateByDefaultFlagIsTrue()
+                .orElseThrow(() -> new EntityNotFoundException(EntityName.HOMO_STATE));
+    }
 }

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HomoStateRepository extends JpaRepository<HomoState, Long> {
     Optional<HomoState> findHomoStateBySysName(String sysName);
+
+    Optional<HomoState> findHomoStateByDefaultFlagIsTrue();
 }

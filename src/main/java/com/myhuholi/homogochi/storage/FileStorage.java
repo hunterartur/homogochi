@@ -29,4 +29,26 @@ public interface FileStorage {
      * @return Одну из реализаций интерфейса {@link Resource}
      */
     Resource load(String filePath);
+
+    /**
+     * Выгрузка файла в бинарном виде
+     * @param filePath Путь/Ключ для нахождения файла
+     * @return Файл в бинарном формате
+     */
+    byte[] loadFileBytes(String filePath);
+
+    /**
+     * Метод отвечает за сохранение файла
+     * В реализации необходимо проверять файл на пустоту
+     * @param file Объект файла, содержащий данные в виде массива байтов и название файла, включая расширение
+     * @param filePath Путь/Ключ для сохранения файла в хранилище
+     */
+    void store(Resource file, String filePath);
+
+    /**
+     * Проверка существования файла
+     * @param filePath Путь/Ключ для нахождения файла
+     * @return True если файл существует, иначе false
+     */
+    boolean isFileExists(String filePath);
 }

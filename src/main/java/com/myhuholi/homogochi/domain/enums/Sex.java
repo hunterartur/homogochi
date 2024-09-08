@@ -9,12 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 @RequiredArgsConstructor
 @Getter
 public enum Sex {
-    MALE("MALE", "Мужской"),
-    FEMALE("FEMALE", "Женский")
+    MALE("MALE", "Мужской", 1),
+    FEMALE("FEMALE", "Женский", 0)
     ;
 
     private final String sysName;
     private final String description;
+    private final int value;
 
     public static Sex getBySysName(String sexSysName) {
         if (StringUtils.isBlank(sexSysName)) {

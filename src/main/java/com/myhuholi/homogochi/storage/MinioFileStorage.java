@@ -8,9 +8,13 @@ import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import io.minio.StatObjectArgs;
+import io.minio.errors.ErrorResponseException;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,7 +66,7 @@ public class MinioFileStorage implements FileStorage {
      */
     @Override
     public void store(MultipartFile file, String filePath) {
-        if (file.isEmpty() || file.getOriginalFilename() == null) {
+        if (file.isEmpty() ||  StringUtils.isBlank(file.getOriginalFilename())) {
             throw new StorageException("File is empty");
         }
 
@@ -121,5 +125,51 @@ public class MinioFileStorage implements FileStorage {
         }
 
         throw new StorageException("File not found: %s".formatted(filePath), StorageError.NOT_FOUND_ERROR);
+    }
+
+    /**
+     * Выгрузка файла в бинарном виде
+     * @param filePath Путь/Ключ для нахождения файла
+     * @return Файл в бинарном формате
+     */
+    @Override
+    public byte[] loadFileBytes(String filePath) {
+        Resource resource = load(filePath);
+        try {
+            return resource.getContentAsByteArray();
+        } catch (IOException e) {
+            throw new StorageException(String.format("Can't get file content as byte array: %s", filePath), e, StorageError.STORAGE_ERROR);
+        }
+    }
+
+    @Override
+    public void store(Resource file, String filePath) {
+        if (!file.isFile() || !file.isReadable() || StringUtils.isBlank(file.getFilename())) {
+            throw new StorageException("File is empty");
+        }
+
+        try (InputStream inputStream = file.getInputStream()) {
+            minioClient.putObject(PutObjectArgs.builder()
+                    .stream(inputStream, inputStream.available(), -1)
+                    .bucket(bucket)
+                    .object(filePath)
+                    .build());
+        } catch (Exception e) {
+            throw new StorageException("Failed to store file: %s".formatted(file.getFilename()), e);
+        }
+    }
+
+    @Override
+    public boolean isFileExists(String filePath) {
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(filePath).build());
+            return true;
+        } catch (ErrorResponseException e) {
+            return false;
+        } catch (Exception e) {
+            throw new StorageException(e.getMessage(), e);
+        }
     }
 }

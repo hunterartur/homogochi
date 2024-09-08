@@ -15,7 +15,6 @@ public enum ActivityRate {
     ;
 
     private final String description;
-
     private final int value;
     private final String sysName;
 
