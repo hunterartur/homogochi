@@ -64,3 +64,4 @@ public class UserFacade {
         return mlService.getStepsCount(stepEstimator);
     }
 }
+
